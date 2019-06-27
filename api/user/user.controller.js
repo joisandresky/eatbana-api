@@ -3,9 +3,6 @@ const Q = require('q');
 const User = require('./user.model');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const Patient = require('../patient/patient.model');
-const Doctor = require('../doctor/doctor.model');
-const Nurse = require('../nurse/nurse.model');
 
 process.env.SECRET_KEY = 'secret'
 
@@ -141,13 +138,13 @@ exports.login = function (req, res) {
                         role: user.role
                     }
                     switch (user.role) {
-                        case 'patient':
+                        case 'admin':
                             return res.send({
                                 token: token,
                                 user: payload
                             });
                             break;
-                        case 'doctor':
+                        case 'owner':
                             return res.send({
                                 token: token,
                                 user: payload

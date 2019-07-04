@@ -42,6 +42,15 @@ exports.show = function (req, res) {
     });
 };
 
+exports.getGuestbyUser = function (req, res) {
+    Guest.findOne({ user: req.params.id }).populate('user').exec(function (err, guest) {
+        if (err) return res.status(500).send(err);
+        if (!guest) return res.status(404).json({ message: 'Guest Not Found! ' });
+
+        res.status(200).json(guest);
+    });
+}
+
 exports.create = function (req, res) {
     let newUser = {
         email: req.body.email,

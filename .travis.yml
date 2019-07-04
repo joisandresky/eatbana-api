@@ -5,6 +5,9 @@ services:
 before_install:
   - docker build -t joisandresky/eatbana-api -f Dockerfile .
 
+install:
+  - bundle install
+
 deploy:
   provider: elasticbeanstalk
   region: "us-east-2"

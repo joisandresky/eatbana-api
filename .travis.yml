@@ -2,6 +2,10 @@ sudo: required
 services:
   - docker
 
+language: node_js
+node_js:
+  - 10.16
+
 before_install:
   - docker build -t joisandresky/eatbana-api -f Dockerfile .
 

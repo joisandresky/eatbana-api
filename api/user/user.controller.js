@@ -72,11 +72,16 @@ exports.seed = function (req, res) {
         password: 'admin123',
         role: 'administrator'
     };
-
-    User.create(newUser, function (err, user) {
+    User.count({ role: 'administrator' }).exec(function (err, c) {
         if (err) return res.status(500).send(err);
 
-        res.status(201).json({ message: 'Doctor seeded', doctor: doctor.name });
+        if (c > 0) return res.status(400).json({ message: 'User Admin Already Seeded!' });
+
+        User.create(newUser, function (err, user) {
+            if (err) return res.status(500).send(err);
+
+            return res.status(201).json({ message: "User Admin Seeded!" });
+        });
     });
 }
 
@@ -137,6 +142,9 @@ exports.login = function (req, res) {
                         email: user.email,
                         role: user.role
                     }
+                    let token = jwt.sign(payload, process.env.SECRET_KEY, {
+                        expiresIn: 1440
+                    });
                     switch (user.role) {
                         case 'admin':
                             return res.send({

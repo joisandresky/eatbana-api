@@ -27,6 +27,7 @@ const RestaurantSchema = new Schema({
     photos: [{ type: String, trim: true }],
     bookAvailable: { type: Boolean, default: false },
     bookTimeSlot: [{ type: Date }],
+    capacity: { type: Number, default: 0 },
     user: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 

@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const { DB_URL } = require('./config');
 const PORT = process.env.PORT || 8080;
+const cors = require('cors');
 
 const app = express();
 
@@ -14,6 +15,7 @@ mongoose.connection.on('error', err => {
     console.log('err to connect to Database', err);
 });
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 require('./routes')(app);

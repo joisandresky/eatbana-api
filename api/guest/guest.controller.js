@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const Q = require('q');
 const Guest = require('./guest.model');
+const User = require('../user/user.model');
 
 //membuat function
 exports.index = function (req, res) {
@@ -42,10 +43,21 @@ exports.show = function (req, res) {
 };
 
 exports.create = function (req, res) {
-    Guest.create(req.body, function (err, guest) {
+    let newUser = {
+        email: req.body.email,
+        password: req.body.password,
+        role: 'guest'
+    };
+    User.create(newUser, function (err, user) {
         if (err) return res.status(500).send(err);
+        console.log('user created', user);
 
-        res.status(201).send(guest);
+        req.body.user = user._id;
+        Guest.create(req.body, function (err, guest) {
+            if (err) return res.status(500).send(err);
+
+            res.status(201).send(guest);
+        });
     });
 }
 

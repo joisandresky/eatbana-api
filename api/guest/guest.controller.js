@@ -43,10 +43,11 @@ exports.show = function (req, res) {
 };
 
 exports.getGuestbyUser = function (req, res) {
-    Guest.findOne({ user: req.params.id }).populate('user', '-password').exec(function (err, guest) {
+    Guest.findOne({ user: req.params.id }).populate('user').lean().exec(function (err, guest) {
         if (err) return res.status(500).send(err);
         if (!guest) return res.status(404).json({ message: 'Guest Not Found! ' });
 
+        delete guest.user.password;
         res.status(200).json(guest);
     });
 }

@@ -34,7 +34,7 @@ exports.search = function (req, res) {
 
 exports.show = function (req, res) {
     //http://localhost:5000/api/guests/234567890
-    Guest.findOne({ _id: req.params.id }).populate('user').exec(function (err, guest) {
+    Guest.findOne({ _id: req.params.id }).populate('user').select('-user.password').exec(function (err, guest) {
         if (err) return res.status(500).send(err);
         if (!guest) return res.status(404).json({ message: 'Guest Not Found! ' });
 

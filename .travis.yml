@@ -8,7 +8,9 @@ node_js:
 
 before_install:
   - docker build -t joisandresky/eatbana-api -f Dockerfile .
-  
+
+script: 'true'  
+
 deploy:
   provider: elasticbeanstalk
   region: "us-east-2"

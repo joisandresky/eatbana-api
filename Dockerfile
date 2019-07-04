@@ -1,13 +1,6 @@
-FROM node:alpine
+FROM node:10.16-jessie
 
 WORKDIR /usr/app
-
-RUN apk --no-cache --virtual build-dependencies add \
-    python \
-    make \
-    g++ \
-    && npm install \
-    && apk del build-dependencies
 
 COPY package.json .
 

@@ -4,8 +4,8 @@ const controller = require('./guest.controller');
 
 router.get('/', controller.index);
 router.get('/search', controller.search);
+router.get('/user/:id', controller.getGuestbyUser);
 router.get('/:id', controller.show);
-router.get('/:id/user', controller.getGuestbyUser);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
 router.delete('/:id', controller.destroy);

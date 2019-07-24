@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const Q = require('q');
 const Restaurant = require('./restaurant.model');
+const User = require('../user/user.model');
 
 //membuat function
 exports.index = function (req, res) {
@@ -42,10 +43,20 @@ exports.show = function (req, res) {
 };
 
 exports.create = function (req, res) {
-    Restaurant.create(req.body, function (err, restaurant) {
+    let newUser = {
+        email: req.body.email,
+        password: req.body.password,
+        role: 'owner'
+    };
+    User.create(newUser, function (err, user) {
         if (err) return res.status(500).send(err);
 
-        res.status(201).send(restaurant);
+        req.body.user = user._id;
+        Restaurant.create(req.body, function (err, restaurant) {
+            if (err) return res.status(500).send(err);
+
+            res.status(201).send(restaurant);
+        });
     });
 }
 

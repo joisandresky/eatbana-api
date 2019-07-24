@@ -3,20 +3,25 @@ const Schema = mongoose.Schema;
 
 const RestaurantSchema = new Schema({
     code: { type: String, trim: true },
+    name: { type: String, trim: true, required: true },
     cuisines: [{ type: String, trim: true }],
     estabilishment: { type: String, trim: true },
     phone: { type: String, trim: true },
     openingHours: [{
         day: { type: String, trim: true },
-        startHours: { type: Number },
-        endHours: { type: Number }
+        startHours: { type: Date },
+        endHours: { type: Date }
     }],
-    address: {
-        street: { type: String, trim: true },
-        city: { type: String, trim: true },
-        state: { type: String, trim: true },
-        coordinates: [{ type: Number }]
+    address: { type: String, required: true, trim: true },
+    location: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: [{ type: Number, required: true }]
     },
+    // coordinates: [{ type: Number }],
     facilities: [{ type: String, trim: true }],
     menuImage: [{ type: String, trim: true }],
     reviews: [{
@@ -28,7 +33,10 @@ const RestaurantSchema = new Schema({
     bookAvailable: { type: Boolean, default: false },
     bookTimeSlot: [{ type: Date }],
     capacity: { type: Number, default: 0 },
+    profileCompleted: { type: Boolean, default: false },
     user: { type: Schema.Types.ObjectId, ref: 'User' }
 });
+
+RestaurantSchema.index({ 'location': '2dsphere' });
 
 module.exports = mongoose.model('Restaurant', RestaurantSchema);

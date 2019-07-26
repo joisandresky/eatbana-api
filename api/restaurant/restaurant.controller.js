@@ -54,7 +54,7 @@ exports.create = function (req, res) {
         req.body.user = user._id;
         req.body.location = {
             type: "Point",
-            coordinates: req.body.coordinates
+            coordinates: req.body.coordinates.reverse()
         };
 
         Restaurant.create(req.body, function (err, restaurant) {

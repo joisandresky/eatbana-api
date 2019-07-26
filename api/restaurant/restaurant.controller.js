@@ -52,6 +52,11 @@ exports.create = function (req, res) {
         if (err) return res.status(500).send(err);
 
         req.body.user = user._id;
+        req.body.location = {
+            type: "Point",
+            coordinates: req.body.coordinates
+        };
+
         Restaurant.create(req.body, function (err, restaurant) {
             if (err) return res.status(500).send(err);
 

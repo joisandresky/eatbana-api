@@ -22,7 +22,12 @@ const RestaurantSchema = new Schema({
         coordinates: [{ type: Number, required: true }]
     },
     // coordinates: [{ type: Number }],
-    facilities: [{ type: String, trim: true }],
+    facilities: [{
+        value: { type: String },
+        name: { type: String },
+        point: { type: Number },
+        selected: { type: Boolean }
+    }],
     menuImage: [{ type: String, trim: true }],
     reviews: [{
         customer: { type: Schema.Types.ObjectId, ref: 'Guest' },

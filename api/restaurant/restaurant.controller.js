@@ -36,6 +36,9 @@ exports.nearby = function (req, res) {
     if (!req.query.lng && !req.query.lat) {
         return res.status(500).json({ message: "Latitude and Longitude is Required!" });
     }
+    let page = req.query.page || 1;
+    let limit = req.query.limit || 25;
+    let skip = (page - 1) * limit;
     Q.all([
         Restaurant.find({
             location: {
@@ -47,7 +50,7 @@ exports.nearby = function (req, res) {
                     }
                 }
             }
-        }).exec(),
+        }).skip(skip).limit(limit).exec(),
         Restaurant.count({
             location: {
                 $near: {
@@ -58,7 +61,7 @@ exports.nearby = function (req, res) {
                     }
                 }
             }
-        }).exec()
+        }).skip(skip).limit(limit).exec()
     ]).spread(function (restaurants, total) {
         res.status(200).json({ restaurant: restaurants, total: total });
     })

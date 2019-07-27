@@ -32,6 +32,41 @@ exports.search = function (req, res) {
     });
 };
 
+exports.nearby = function (req, res) {
+    if (!req.query.lng && !req.query.lat) {
+        return res.status(500).json({ message: "Latitude and Longitude is Required!" });
+    }
+    Q.all([
+        Restaurant.find({
+            location: {
+                $near: {
+                    $maxDistance: 5000,
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [Number(req.query.lng), Number(req.query.lat)]
+                    }
+                }
+            }
+        }).exec(),
+        Restaurant.count({
+            location: {
+                $near: {
+                    $maxDistance: 5000,
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [Number(req.query.lng), Number(req.query.lat)]
+                    }
+                }
+            }
+        }).exec()
+    ]).spread(function (restaurants, total) {
+        res.status(200).json({ restaurant: restaurants, total: total });
+    })
+        .catch(function (err) {
+            if (err) return res.status(500).send(err);
+        });
+}
+
 exports.show = function (req, res) {
     //http://localhost:5000/api/restaurants/234567890
     Restaurant.findOne({ _id: req.params.id }).exec(function (err, restaurant) {

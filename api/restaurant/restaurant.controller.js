@@ -36,8 +36,8 @@ exports.nearby = function (req, res) {
     if (!req.query.lng && !req.query.lat) {
         return res.status(500).json({ message: "Latitude and Longitude is Required!" });
     }
-    let page = req.query.page || 1;
-    let limit = req.query.limit || 25;
+    let page = Number(req.query.page) || 1;
+    let limit = Number(req.query.limit) || 25;
     let skip = (page - 1) * limit;
     Q.all([
         Restaurant.find({

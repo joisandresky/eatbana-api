@@ -43,8 +43,8 @@ exports.nearby = function (req, res) {
 
     Q.all([
         Restaurant.find({
-            name: { $regex: search, $options: 'i' },
-            estabilishment: { $regex: search, $options: 'i' },
+            // name: { $regex: search, $options: 'i' },
+            // estabilishment: { $regex: search, $options: 'i' },
             location: {
                 $near: {
                     $maxDistance: 5000,
@@ -56,8 +56,8 @@ exports.nearby = function (req, res) {
             }
         }).skip(skip).limit(limit).exec(),
         Restaurant.count({
-            name: { $regex: search, $options: 'i' },
-            estabilishment: { $regex: search, $options: 'i' },
+            // name: { $regex: search, $options: 'i' },
+            // estabilishment: { $regex: search, $options: 'i' },
             location: {
                 $near: {
                     $maxDistance: 5000,

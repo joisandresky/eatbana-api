@@ -39,11 +39,11 @@ exports.nearby = function (req, res) {
     let page = Number(req.query.page) || 1;
     let limit = Number(req.query.limit) || 25;
     let skip = (page - 1) * limit;
-    let search = req.query.search;
+    let search = req.query.search ? req.query.search : '';
 
     Q.all([
         Restaurant.find({
-            // name: { $regex: search, $options: 'i' },
+            name: { $regex: search, $options: 'i' },
             // estabilishment: { $regex: search, $options: 'i' },
             location: {
                 $near: {
@@ -56,7 +56,7 @@ exports.nearby = function (req, res) {
             }
         }).skip(skip).limit(limit).exec(),
         Restaurant.count({
-            // name: { $regex: search, $options: 'i' },
+            name: { $regex: search, $options: 'i' },
             // estabilishment: { $regex: search, $options: 'i' },
             location: {
                 $near: {

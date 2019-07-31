@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { DB_URL } = require('./config');
 const PORT = process.env.PORT || 8080;
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -14,6 +15,8 @@ mongoose.connection.on('connected', () => {
 mongoose.connection.on('error', err => {
     console.log('err to connect to Database', err);
 });
+
+app.use(express.static(path.join(__dirname, 'build')));
 
 app.use(cors());
 app.use(bodyParser.json());

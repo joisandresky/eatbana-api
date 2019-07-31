@@ -3,4 +3,8 @@ module.exports = app => {
     app.use('/api/reservations', require('./api/reservation'));
     app.use('/api/restaurants', require('./api/restaurant'));
     app.use('/api/users', require('./api/user'));
+    app.route('/*')
+        .get((req, res) => {
+            res.sendfile('build/index.html');
+        });
 }

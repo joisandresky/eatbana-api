@@ -100,7 +100,7 @@ exports.create = function (req, res) {
             type: "Point",
             coordinates: req.body.coordinates.reverse()
         };
-
+        req.body.estabilishment = req.body.establishment;
         Restaurant.create(req.body, function (err, restaurant) {
             if (err) return res.status(500).send(err);
 

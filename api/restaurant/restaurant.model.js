@@ -38,6 +38,8 @@ const RestaurantSchema = new Schema({
     bookAvailable: { type: Boolean, default: false },
     bookTimeSlot: [{ type: Date }],
     capacity: { type: Number, default: 0 },
+    lowCost: { type: Number, default: 0 },
+    highestCost: { type: Number, default: 0 },
     profileCompleted: { type: Boolean, default: false },
     user: { type: Schema.Types.ObjectId, ref: 'User' }
 });

@@ -88,7 +88,7 @@ function mailing(to, status, cb) {
     let transporter = mailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'dat7joee@gmail.com',
+            user: 'jois@lighthouse.co.id',
             pass: 'linuxer7'
         }
     });

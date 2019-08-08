@@ -64,6 +64,19 @@ exports.update = function (req, res) {
             res.status(200).json({ massage: 'Reservation Updated', reservation: updated });
         });
     });
+};
+
+exports.updateStatus = function (req, res) {
+    if (!req.params.id) return res.status(400).json({ message: "ID Must Be Valid!" });
+
+    Reservation.update({ _id: req.params.id }, { $set: { status: req.body.status } }, function (err, result) {
+        if (err) return res.status(500).send(err);
+
+        return res.status(200).json({
+            _id: req.params.id,
+            result: result
+        });
+    });
 }
 
 exports.destroy = function (req, res) {

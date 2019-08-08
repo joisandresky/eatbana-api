@@ -10,10 +10,14 @@ exports.index = function (req, res) {
         limit = Number(req.query.limit) || 10,
         skip = (page - 1) * limit;
 
+    let query = {
+        restaurant: req.query.id
+    };
+
     //proses async
     Q.all([
-        Reservation.count(), //total data
-        Reservation.find().skip(skip).limit(limit) //jumlah data
+        Reservation.count(query), //total data
+        Reservation.find(query).skip(skip).limit(limit) //jumlah data
     ])
         .spread(function (total, reservations) {
             res.status(200).json({ total, reservations });

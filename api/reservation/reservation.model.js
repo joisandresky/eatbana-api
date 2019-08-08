@@ -16,6 +16,7 @@ const ReservationSchema = new Schema({
         specialEvent: [{ type: String, trim: true }],
         specialRequest: { type: String, trim: true }
     },
+    restaurant: { type: Schema.Types.ObjectId, ref: 'Restaurant' },
     status: { type: String, enum: ["new", "confirmed", "canceled", "rejected"] }
 });
 

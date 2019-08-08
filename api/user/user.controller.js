@@ -3,6 +3,7 @@ const Q = require('q');
 const User = require('./user.model');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const Restaurant = require("../restaurant/restaurant.model");
 
 process.env.SECRET_KEY = 'secret'
 
@@ -153,9 +154,15 @@ exports.login = function (req, res) {
                             });
                             break;
                         case 'owner':
-                            return res.send({
-                                token: token,
-                                user: payload
+                            Restaurant.findOne({ user: user._id }).exec(function (err, restaurant) {
+                                if (err) return res.status(500).send(err);
+
+                                if (!restaurant) return res.status(400).json({ message: "Restaurant Data Not Found!" });
+                                payload.restaurant = restaurant;
+                                return res.send({
+                                    token: token,
+                                    user: payload
+                                });
                             });
                             break;
                         default:

@@ -12,14 +12,20 @@ before_install:
 script: 'true'  
 
 deploy:
-  provider: elasticbeanstalk
-  region: "us-east-2"
-  app: "eatbana-2"
-  env: "Eatbana2-env"
-  bucket_name: "elasticbeanstalk-us-east-2-505365354191"
-  bucket_path: "eatbana-2"
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key:
-    secure: "$AWS_SECRET_KEY"
+  - provider: elasticbeanstalk
+    region: "us-east-2"
+    app: "eatbana-2"
+    env: "Eatbana2-env"
+    bucket_name: "elasticbeanstalk-us-east-2-505365354191"
+    bucket_path: "eatbana-2"
+    on:
+      branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key:
+      secure: "$AWS_SECRET_KEY"
+  - provider: heroku
+    api_key: "$HEROKU_API_KEY"
+    app: "eatbana"
+    on:
+      branch: master
+  

@@ -73,7 +73,7 @@ exports.updateStatus = function (req, res) {
     Reservation.update({ _id: req.params.id }, { $set: { status: req.body.status } }, function (err, result) {
         if (err) return res.status(500).send(err);
 
-        mailing('joisandresky@gmail.com', req.body.status, function (err, info) {
+        mailing(req.body.email, req.body.status, function (err, info) {
             return res.status(200).json({
                 _id: req.params.id,
                 result: result,
@@ -88,16 +88,16 @@ function mailing(to, status, cb) {
     let transporter = mailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'jois@lighthouse.co.id',
+            user: 'dat7joee@gmail.com',
             pass: 'linuxer7'
         }
     });
 
     const mailOptions = {
-        from: 'information@eatbana.id', // sender address
+        from: 'Information from EATBANA.id <information@eatbana.id>', // sender address
         to: to, // list of receivers
         subject: 'RESERVATION STATUS', // Subject line
-        html: `<p>YOUR RESERVATION STATUS IN <RESTAURANT_NAME> is ${status}</p>`// plain text body
+        html: `<p>YOUR RESERVATION STATUS is ${status}</p>`// plain text body
     };
 
     transporter.sendMail(mailOptions, function (err, info) {

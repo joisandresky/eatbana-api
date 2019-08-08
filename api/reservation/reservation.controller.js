@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const Q = require('q');
 const Reservation = require('./reservation.model');
+const mailer = require('nodemailer');
 
 //membuat function
 exports.index = function (req, res) {
@@ -72,11 +73,40 @@ exports.updateStatus = function (req, res) {
     Reservation.update({ _id: req.params.id }, { $set: { status: req.body.status } }, function (err, result) {
         if (err) return res.status(500).send(err);
 
-        return res.status(200).json({
-            _id: req.params.id,
-            result: result
+        mailing('joisandresky@gmail.com', req.body.status, function (err, info) {
+            return res.status(200).json({
+                _id: req.params.id,
+                result: result,
+                info: info,
+                errMail: err
+            });
         });
     });
+}
+
+function mailing(to, status, cb) {
+    let transporter = mailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'dat7joee@gmail.com',
+            pass: 'linuxer7'
+        }
+    });
+
+    const mailOptions = {
+        from: 'information@eatbana.id', // sender address
+        to: to, // list of receivers
+        subject: 'RESERVATION STATUS', // Subject line
+        html: `<p>YOUR RESERVATION STATUS IN <RESTAURANT_NAME> is ${status}</p>`// plain text body
+    };
+
+    transporter.sendMail(mailOptions, function (err, info) {
+        if (err) {
+            cb(err, null);
+        } else {
+            cb(null, info);
+        }
+    })
 }
 
 exports.destroy = function (req, res) {

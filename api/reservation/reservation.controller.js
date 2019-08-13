@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Q = require('q');
 const Reservation = require('./reservation.model');
 const mailer = require('nodemailer');
+const moment = require('moment');
 
 //membuat function
 exports.index = function (req, res) {
@@ -74,21 +75,40 @@ exports.update = function (req, res) {
 exports.updateStatus = function (req, res) {
     if (!req.params.id) return res.status(400).json({ message: "ID Must Be Valid!" });
 
-    Reservation.update({ _id: req.params.id }, { $set: { status: req.body.status } }, function (err, result) {
+    Reservation.findOne({ _id: req.params.id }).populate('restaurant').exec(function (err, reservation) {
         if (err) return res.status(500).send(err);
 
-        mailing(req.body.email, req.body.status, function (err, info) {
-            return res.status(200).json({
-                _id: req.params.id,
-                result: result,
-                info: info,
-                errMail: err
-            });
-        });
+        if (!reservation) return res.status(404).json({ message: 'Reservation not Found!' });
+        reservation.status = req.body.status;
+
+        reservation.save(function (err, rsv) {
+            if (err) return res.status(500).send(err);
+
+            mailing(req.body.email, req.body.status, reservation, function (errMail, info) {
+                return res.status(200).json({
+                    _id: req.params.id,
+                    result: rsv,
+                    errMail: err,
+                    info: info
+                });
+            })
+        })
     });
+    // Reservation.update({ _id: req.params.id }, { $set: { status: req.body.status } }, function (err, result) {
+    //     if (err) return res.status(500).send(err);
+
+    //     mailing(req.body.email, req.body.status, function (err, info) {
+    //         return res.status(200).json({
+    //             _id: req.params.id,
+    //             result: result,
+    //             info: info,
+    //             errMail: err
+    //         });
+    //     });
+    // });
 }
 
-function mailing(to, status, cb) {
+function mailing(to, status, reservation, cb) {
     let transporter = mailer.createTransport({
         service: 'gmail',
         auth: {
@@ -101,7 +121,7 @@ function mailing(to, status, cb) {
         from: 'Information from EATBANA.id <information@eatbana.id>', // sender address
         to: to, // list of receivers
         subject: 'RESERVATION STATUS', // Subject line
-        html: `<p>YOUR RESERVATION STATUS is ${status}</p>`// plain text body
+        html: `<p>YOUR RESERVATION STATUS in ${(reservation && reservation.restaurant) ? reservation.restaurant.name : '-'} is ${status} at ${moment().format("DD-MM-YYY") + ' ' + moment().format("HH:mm")}</p>`// plain text body
     };
 
     transporter.sendMail(mailOptions, function (err, info) {

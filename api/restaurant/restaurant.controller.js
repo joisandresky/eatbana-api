@@ -52,7 +52,6 @@ exports.nearby = function (req, res) {
                         type: "Point",
                         coordinates: [Number(req.query.lng), Number(req.query.lat)]
                     },
-                    distanceField: "dist.calculated",
                     spherical: true
                 }
             }
@@ -67,7 +66,6 @@ exports.nearby = function (req, res) {
                         type: "Point",
                         coordinates: [Number(req.query.lng), Number(req.query.lat)]
                     },
-                    distanceField: "dist.calculated",
                     spherical: true
                 }
             }

@@ -100,8 +100,7 @@ exports.findWithFormula = function (req, res) {
         });
 
         Q.all(promisesFacilities)
-            .spread(function (total) {
-                console.log('resss', filteredRestaurants);
+            .spread(function () {
                 res.status(200).json(restaurants);
             })
             .catch(function (err) {
@@ -122,7 +121,7 @@ function countFacilitiesPoint(restaurant) {
 
         restaurant.pointFacilities = total;
 
-        resolve(total);
+        resolve(restaurant);
     });
 };
 

@@ -100,9 +100,9 @@ exports.findWithFormula = function (req, res) {
         });
 
         Q.all(promisesFacilities)
-            .spread(function (filteredRestaurants) {
+            .spread(function (total) {
                 console.log('resss', filteredRestaurants);
-                res.status(200).json({ restaurants: restaurants, filtered: filteredRestaurants });
+                res.status(200).json(restaurants);
             })
             .catch(function (err) {
                 if (err) return res.status(500).send(err);
@@ -116,13 +116,13 @@ function countFacilitiesPoint(restaurant) {
         restaurant.facilities.filter(function (fa) {
             return fa.selected;
         }).map(function (fc) {
+            console.log('fc after filter selected', fc);
             total += fc.point;
         });
 
         restaurant.pointFacilities = total;
-        console.log('res', restaurant);
 
-        resolve(restaurant);
+        resolve(total);
     });
 };
 

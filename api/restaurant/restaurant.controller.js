@@ -111,10 +111,16 @@ exports.findWithFormula = function (req, res) {
 };
 
 function countFacilitiesPoint(restaurant) {
-    console.log('res', restaurant);
     return new Promise(function (resolve, reject) {
-        let total = restaurant.facilities.reduce((oldVal, currValue) => oldVal.point + currValue.point);
+        let total = 0;
+        restaurant.facilities.filter(function (fa) {
+            return fa.selected;
+        }).map(function (fc) {
+            total += fc.point;
+        });
+
         restaurant.pointFacilities = total;
+        console.log('res', restaurant);
 
         resolve(restaurant);
     });

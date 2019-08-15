@@ -80,6 +80,7 @@ exports.findWithFormula = function (req, res) {
     if (!req.query.lng && !req.query.lat) {
         return res.status(500).json({ message: "Latitude and Longitude is Required!" });
     }
+    let promisesFacilities = [];
 
     Restaurant.aggregate([
         {
@@ -90,11 +91,32 @@ exports.findWithFormula = function (req, res) {
                 includeLocs: "dist.location",
                 spherical: true
             }
-        }
+        },
+        { $limit: 10 },
     ]).exec(function (err, restaurants) {
-        if (err) return res.status(500).send(500);
+        if (err) return res.status(500).send(err);
+        restaurants.map(function (rest) {
+            promisesFacilities.push(countFacilitiesPoint(rest));
+        });
 
-        res.status(200).json(restaurants);
+        Q.all(promisesFacilities)
+            .spread(function (filteredRestaurants) {
+                console.log('resss', filteredRestaurants);
+                res.status(200).json({ restaurants: restaurants, filtered: filteredRestaurants });
+            })
+            .catch(function (err) {
+                if (err) return res.status(500).send(err);
+            });
+    });
+};
+
+function countFacilitiesPoint(restaurant) {
+    console.log('res', restaurant);
+    return new Promise(function (resolve, reject) {
+        let total = restaurant.facilities.reduce(({ point }, currValue) => point + currValue.point);
+        restaurant.pointFacilities = total;
+
+        resolve(restaurant);
     });
 };
 

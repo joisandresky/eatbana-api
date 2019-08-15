@@ -30,6 +30,7 @@ const upload = multer({
 router.get('/', controller.index);
 router.get('/search', controller.search);
 router.get('/nearby', controller.nearby);
+router.get('/findCriteria', controller.findWithFormula);
 router.get('/:id', controller.show);
 router.post('/', controller.create);
 router.post('/upload', upload.single('image'), function (req, res) {

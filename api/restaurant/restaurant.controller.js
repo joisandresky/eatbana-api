@@ -52,7 +52,6 @@ exports.nearby = function (req, res) {
                         type: "Point",
                         coordinates: [Number(req.query.lng), Number(req.query.lat)]
                     },
-                    spherical: true
                 }
             }
         }).skip(skip).limit(limit).exec(),
@@ -66,7 +65,6 @@ exports.nearby = function (req, res) {
                         type: "Point",
                         coordinates: [Number(req.query.lng), Number(req.query.lat)]
                     },
-                    spherical: true
                 }
             }
         }).skip(skip).limit(limit).exec()

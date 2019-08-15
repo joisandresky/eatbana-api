@@ -51,6 +51,54 @@ exports.nearby = function (req, res) {
                     $geometry: {
                         type: "Point",
                         coordinates: [Number(req.query.lng), Number(req.query.lat)]
+                    },
+                    distanceField: "dist.calculated",
+                    spherical: true
+                }
+            }
+        }).skip(skip).limit(limit).exec(),
+        Restaurant.count({
+            name: { $regex: search, $options: 'i' },
+            // estabilishment: { $regex: search, $options: 'i' },
+            location: {
+                $near: {
+                    $maxDistance: 5000,
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [Number(req.query.lng), Number(req.query.lat)]
+                    },
+                    distanceField: "dist.calculated",
+                    spherical: true
+                }
+            }
+        }).skip(skip).limit(limit).exec()
+    ]).spread(function (restaurants, total) {
+        res.status(200).json({ restaurant: restaurants, total: total });
+    })
+        .catch(function (err) {
+            if (err) return res.status(500).send(err);
+        });
+}
+
+exports.findWithFormula = function (req, res) {
+    if (!req.query.lng && !req.query.lat) {
+        return res.status(500).json({ message: "Latitude and Longitude is Required!" });
+    }
+    let page = Number(req.query.page) || 1;
+    let limit = Number(req.query.limit) || 25;
+    let skip = (page - 1) * limit;
+    let search = req.query.search ? req.query.search : '';
+
+    Q.all([
+        Restaurant.find({
+            name: { $regex: search, $options: 'i' },
+            // estabilishment: { $regex: search, $options: 'i' },
+            location: {
+                $near: {
+                    $maxDistance: 5000,
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [Number(req.query.lng), Number(req.query.lat)]
                     }
                 }
             }
@@ -74,7 +122,7 @@ exports.nearby = function (req, res) {
         .catch(function (err) {
             if (err) return res.status(500).send(err);
         });
-}
+};
 
 exports.show = function (req, res) {
     //http://localhost:5000/api/restaurants/234567890

@@ -6,7 +6,6 @@ let totalPembagi = 0;
 
 //membuat function
 exports.index = function (req, res) {
-    // http://localhost:5000/api/restaurants?page=1&limit=10
     let page = Number(req.query.page) || 1,
         limit = Number(req.query.limit) || 10,
         skip = (page - 1) * limit;

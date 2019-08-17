@@ -83,16 +83,21 @@ exports.findWithFormula = function (req, res) {
     }
     let promisesFacilities = [];
 
+    let query = queryBuilder(req.body);
+    let distance = req.body.distance ? distanceQuery(req.body.distance) : 5000;
+    console.log('query', query, distance);
+
     Restaurant.aggregate([
         {
             $geoNear: {
                 near: { type: "Point", coordinates: [Number(req.query.lng), Number(req.query.lat)] },
                 distanceField: "dist.calculated",
-                maxDistance: 5000,
+                maxDistance: distance || 5000,
                 includeLocs: "dist.location",
                 spherical: true
             }
         },
+        query,
         { $limit: 10 },
     ]).exec(function (err, restaurants) {
         if (err) return res.status(500).send(err);
@@ -172,6 +177,55 @@ function countFacilitiesPoint(restaurant) {
         resolve(restaurant);
     });
 };
+
+function queryBuilder(body) {
+    let price = priceQuery(body.price);
+    let capacity = capacityQuery(body.capacity);
+
+    return { $match: { avgCost: price, capacity: capacity } };
+}
+
+function priceQuery(price) {
+    if (!price) return { $gte: 20000 };
+
+    switch (price.value) {
+        case "price_under_10":
+            return { $lte: 10000 };
+        case "price_10_to_20":
+            return { $gte: 10000, $lte: 20000 };
+        default:
+            return { $gte: 20000 };
+    }
+}
+
+function distanceQuery(distance) {
+    if (!distance) return 5000;
+    switch (distance.value) {
+        case "distance_under_1km":
+            return 1000;
+        case "distance_1_to_2km":
+            return 2000;
+        default:
+            return 5000;
+    }
+}
+
+function facilitiesQuery(facility) {
+
+}
+
+function capacityQuery(capacity) {
+    if (!capacity) return { $gte: 300 };
+
+    switch (capacity.value) {
+        case "capacity_under_100":
+            return { $lte: 100 };
+        case "capacity_100_to_300":
+            return { $gte: 100, $lte: 300 };
+        default:
+            return { $gte: 300 };
+    }
+}
 
 exports.show = function (req, res) {
     //http://localhost:5000/api/restaurants/234567890

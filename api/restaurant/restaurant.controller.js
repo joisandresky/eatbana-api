@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Q = require('q');
 const Restaurant = require('./restaurant.model');
 const User = require('../user/user.model');
+let totalPembagi = 0;
 
 //membuat function
 exports.index = function (req, res) {
@@ -101,13 +102,60 @@ exports.findWithFormula = function (req, res) {
 
         Q.all(promisesFacilities)
             .spread(function () {
-                res.status(200).json(restaurants);
+                let promisesFormula = [];
+                restaurants.map(function (restar) {
+                    promisesFormula.push(countWeightedProductFirst(restar));
+                });
+                Q.all(promisesFormula)
+                    .spread(function (result) {
+                        let promisesFormulaEnd = [];
+                        restaurants.map(function (restar) {
+                            promisesFormulaEnd.push(countWeightedProductEnd(restar));
+                        });
+                        Q.all(promisesFormulaEnd)
+                            .spread(function (results) {
+                                restaurants.sort(function (a, b) {
+                                    return a.resultEnd - b.resultEnd;
+                                });
+                                res.status(200).json(restaurants);
+                            }).catch(function (err) {
+                                if (err) return res.status(500).send(err);
+                            });
+                    }).catch(function (err) {
+                        if (err) return res.status(500).send(err);
+                    })
             })
             .catch(function (err) {
                 if (err) return res.status(500).send(err);
             });
     });
 };
+
+function countWeightedProductFirst(restaurant) {
+    return new Promise(function (resolve, reject) {
+        let result = (Math.pow(restaurant.dist.calculated, 0.26)) * (Math.pow(restaurant.avgCost, 0.17)) * (Math.pow(restaurant.capacity, 0.22)) * (Math.pow(50, 0.22));
+        restaurant.resultFirst = result;
+        totalPembagi += result;
+        resolve(restaurant);
+    });
+}
+
+function countWeightedProductEnd(restaurant) {
+    return new Promise(function (resolve, reject) {
+        restaurant.resultEnd = restaurant.resultFirst / totalPembagi;
+        resolve(restaurant);
+    });
+}
+
+function compareResultEnd(a, b) {
+    if (a.resultEnd < b.resultEnd) {
+        return -1;
+    }
+    if (a.resultEnd > b.resultEnd) {
+        return 1;
+    }
+    return 0;
+}
 
 function countFacilitiesPoint(restaurant) {
     return new Promise(function (resolve, reject) {

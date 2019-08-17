@@ -40,6 +40,7 @@ const RestaurantSchema = new Schema({
     capacity: { type: Number, default: 0 },
     lowCost: { type: Number, default: 0 },
     highestCost: { type: Number, default: 0 },
+    avgCost: { type: Number, default: 0 },
     profileCompleted: { type: Boolean, default: false },
     user: { type: Schema.Types.ObjectId, ref: 'User' }
 });

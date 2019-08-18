@@ -91,7 +91,7 @@ exports.findWithFormula = function (req, res) {
             $geoNear: {
                 near: { type: "Point", coordinates: [Number(req.query.lng), Number(req.query.lat)] },
                 distanceField: "dist.calculated",
-                maxDistance: distance || 5000,
+                maxDistance: distance,
                 includeLocs: "dist.location",
                 spherical: true
             }
@@ -149,16 +149,6 @@ function countWeightedProductEnd(restaurant) {
         restaurant.resultEnd = restaurant.resultFirst / totalPembagi;
         resolve(restaurant);
     });
-}
-
-function compareResultEnd(a, b) {
-    if (a.resultEnd < b.resultEnd) {
-        return -1;
-    }
-    if (a.resultEnd > b.resultEnd) {
-        return 1;
-    }
-    return 0;
 }
 
 function countFacilitiesPoint(restaurant) {

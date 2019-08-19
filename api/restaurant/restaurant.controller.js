@@ -199,9 +199,9 @@ function distanceQuery(distance) {
     }
 }
 
-function facilitiesQuery(facility) {
+// function facilitiesQuery(facility) {
 
-}
+// }
 
 function capacityQuery(capacity) {
     if (!capacity) return { $gte: 300 };

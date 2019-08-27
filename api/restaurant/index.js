@@ -40,8 +40,8 @@ router.post('/upload', upload.single('image'), function (req, res) {
     return res.status(400).json({ success: false, message: 'Image not Uploaded!', result: req.file });
   }
 });
-
 router.put('/:id', controller.update);
+router.put('/comment/:id', controller.addComment);
 router.delete('/:id', controller.destroy);
 
 module.exports = router;

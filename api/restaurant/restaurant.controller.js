@@ -266,6 +266,21 @@ exports.update = function (req, res) {
     });
 }
 
+exports.addComment = function (req, res) {
+    if (req.body._id) delete req.body._id;
+    Restaurant.findOne({ _id: req.params.id }).exec(function (err, restaurant) {
+        if (err) return res.status(500).send(err);
+        if (!restaurant) return res.status(404).json({ message: 'Restaurant Not Found! ' });
+        restaurant.reviews.push(req.body);
+        restaurant.markModified('reviews');
+        restaurant.save(function (err) {
+            if (err) return res.status(500).send(err);
+
+            res.status(200).json({ massage: 'Restaurant Updated', restaurant: restaurant });
+        });
+    });
+}
+
 exports.destroy = function (req, res) {
 
     Restaurant.findOne({ _id: req.params.id }).exec(function (err, restaurant) {
